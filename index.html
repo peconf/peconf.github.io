@@ -1,326 +1,300 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEConf - Product Engineers Community</title>
+    <title>PEConf</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <style>
-        /* 기본 리셋 및 폰트 설정 */
+        :root {
+            --bg: #f6efdf;
+            --bg-top: #fbf7ee;
+            --bg-bottom: #f2e7d2;
+            --line-soft: rgba(213, 194, 168, 0.54);
+            --line-faint: rgba(226, 210, 189, 0.38);
+            --orange: rgba(226, 161, 130, 0.62);
+            --orange-strong: rgba(218, 150, 117, 0.78);
+            --green: rgba(178, 198, 142, 0.58);
+            --blue: rgba(151, 183, 219, 0.62);
+            --blue-strong: rgba(141, 171, 206, 0.8);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        html,
         body {
-            /* 브라우저 전체 뷰포트를 채우는 설정 */
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            overflow: hidden; /* 스크롤 방지 (풀스크린 원페이지) */
+            min-height: 100%;
         }
 
-        /* O'Reilly에서 영감을 받은 색상 팔레트와 추상적인 배경 그래픽 */
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: var(--bg);
+            color: #5f5548;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        body::before {
+            z-index: -2;
+            background:
+                radial-gradient(44% 30% at 50% 18%, rgba(232, 220, 198, 0.82) 0 42%, rgba(246, 239, 223, 0) 70%),
+                radial-gradient(16% 10% at 50% 89%, rgba(232, 220, 198, 0.92) 0 48%, rgba(246, 239, 223, 0) 100%),
+                radial-gradient(20% 28% at 10% 16%, rgba(255, 250, 242, 0.95) 0 48%, rgba(246, 239, 223, 0) 100%),
+                radial-gradient(22% 28% at 90% 18%, rgba(255, 249, 241, 0.92) 0 45%, rgba(246, 239, 223, 0) 100%),
+                radial-gradient(24% 30% at 9% 70%, rgba(255, 249, 241, 0.84) 0 42%, rgba(246, 239, 223, 0) 100%),
+                radial-gradient(24% 30% at 91% 72%, rgba(255, 249, 241, 0.84) 0 40%, rgba(246, 239, 223, 0) 100%),
+                radial-gradient(18% 22% at 26% 54%, rgba(255, 251, 246, 0.4) 0 35%, rgba(246, 239, 223, 0) 100%),
+                radial-gradient(18% 22% at 74% 56%, rgba(255, 251, 246, 0.4) 0 35%, rgba(246, 239, 223, 0) 100%),
+                linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 52%, var(--bg-bottom) 100%);
+        }
+
+        body::after {
+            z-index: -1;
+            opacity: 0.16;
+            mix-blend-mode: multiply;
+            background-image:
+                radial-gradient(rgba(255, 255, 255, 0.42) 0.7px, transparent 0.7px),
+                radial-gradient(rgba(221, 205, 180, 0.28) 0.8px, transparent 0.8px);
+            background-size: 5px 5px, 8px 8px;
+            background-position: 0 0, 2px 3px;
+        }
+
         .page-container {
             position: relative;
+            isolation: isolate;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: clamp(40px, 6vh, 84px) clamp(20px, 4vw, 48px);
+        }
+
+        .ambient-block {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 0;
+            background: rgba(236, 225, 204, 0.68);
+            filter: blur(28px);
+            box-shadow: 0 0 120px 60px rgba(249, 244, 236, 0.66);
+        }
+
+        .ambient-block.top {
+            top: 64px;
+            width: min(56vw, 820px);
+            height: min(20vw, 280px);
+            border-radius: 56px;
+            opacity: 0.74;
+        }
+
+        .ambient-block.bottom {
+            bottom: 68px;
+            width: min(18vw, 250px);
+            height: min(7vw, 96px);
+            border-radius: 999px;
+            opacity: 0.84;
+        }
+
+        .circuit-layer {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
-            background-color: #f3efe6; /* 베이지색 기본 배경 */
-            background-image: 
-                linear-gradient(135deg, #1a2530 0%, #1a2530 30%, transparent 30%, transparent 100%),
-                linear-gradient(225deg, #d36446 0%, #d36446 15%, transparent 15%, transparent 100%);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            pointer-events: none;
         }
 
-        /* 추상적인 CSS Blobs 배경 요소 - 책 표지 모양 탈피 */
-        .blob-bg {
-            position: absolute;
-            transition: all 0.5s ease;
-            z-index: 1;
-        }
-
-        .blob-1 {
-            width: 70%;
-            height: 70%;
-            bottom: -20%;
-            left: -10%;
-            background-color: #708259; /* 그린 */
-            border-radius: 40% 60% 70% 30% / 50% 60% 40% 50%;
-            opacity: 0.7;
-        }
-
-        .blob-2 {
-            width: 50%;
-            height: 50%;
-            top: 20%;
-            right: -10%;
-            background-color: #d36446; /* 오렌지 */
-            border-radius: 60% 40% 30% 70% / 60% 50% 60% 40%;
-            opacity: 0.5;
-        }
-
-        /* 헤더: 로고 및 언어 스위치 */
-        header {
+        .hero-composition {
             position: relative;
-            z-index: 10;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 30px 40px;
+            z-index: 3;
+            display: grid;
+            place-items: center;
+            width: min(100%, 1120px);
+            pointer-events: none;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            color: #d36446; /* 오렌지 브랜드 컬러 */
+        .hero-stack {
+            display: grid;
+            justify-items: center;
+            gap: clamp(28px, 3vw, 42px);
+            width: min(100%, 1020px);
         }
 
-        .brand img {
-            width: 48px;
-            height: 48px;
+        .hero-figure {
+            width: min(100%, 980px);
         }
 
-        .brand h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-        }
-
-        /* 단순 언어 스위치 (EN/KO 토글) */
-        .lang-switch {
-            background-color: white;
-            padding: 6px;
-            border-radius: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            gap: 2px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .lang-switch button {
-            appearance: none;
-            border: 0;
-            background: transparent;
-            padding: 8px 20px;
-            border-radius: 20px;
-            color: #4b5563;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            font: inherit;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .lang-switch button.active {
-            background-color: #d36446; /* 선택된 언어 배경 */
-            color: white;
-        }
-
-        .lang-switch button:focus-visible {
-            outline: 2px solid #1a2530;
-            outline-offset: 2px;
-        }
-
-        /* 메인 콘텐츠: 핵심 메시지 (중앙 배치) */
-        main {
-            position: relative;
-            z-index: 5;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
+        .hero-title {
+            max-width: min(40rem, 92%);
+            color: #8a775f;
             text-align: center;
+            text-wrap: balance;
+            font-family: "Avenir Next Condensed", "Avenir Next", "Helvetica Neue", sans-serif;
+            font-size: clamp(1.08rem, 1.7vw, 1.8rem);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            line-height: 1.22;
         }
 
-        .hero-content {
-            max-width: 800px;
+        .hero-figure img {
+            display: block;
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
         }
 
-        .title-group {
-            margin-bottom: 30px;
-        }
-
-        .subtitle {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: #1a2530; /* 네이비 색상 */
-            line-height: 1.1;
-            letter-spacing: -1.5px;
-            margin-bottom: 10px;
-            text-shadow: 0 1px 0 rgba(247, 242, 234, 0.55), 0 0 8px rgba(247, 242, 234, 0.18);
-        }
-
-        .description {
-            font-size: 1.4rem;
+        .hero-description {
+            max-width: min(40rem, 92%);
+            color: rgba(110, 98, 84, 0.92);
+            text-align: center;
+            text-wrap: balance;
+            font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+            font-size: clamp(0.98rem, 1.4vw, 1.18rem);
             font-weight: 500;
-            color: #4b5563;
-            line-height: 1.6;
-            margin-top: 15px;
-            text-shadow: 0 1px 0 rgba(247, 242, 234, 0.55), 0 0 6px rgba(247, 242, 234, 0.16);
+            line-height: 1.75;
+            text-shadow: 0 1px 0 rgba(255, 250, 242, 0.4);
         }
 
-        /* 한국어 텍스트에 대한 타이포그래피 미세 조정 */
-        html[lang="ko"] .subtitle {
-            font-size: 3rem;
-            letter-spacing: -1px;
+        .circuit-layer path,
+        .circuit-layer polyline,
+        .circuit-layer polygon,
+        .circuit-layer line {
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        /* 푸터: 뱃지 및 정보 */
-        footer {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px 40px;
+        .line-soft {
+            stroke: var(--line-soft);
+            stroke-width: 1.9;
         }
 
-        .footer-copy {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #4b5563;
-            text-shadow: 0 1px 0 rgba(247, 242, 234, 0.35);
-            white-space: nowrap;
+        .line-faint {
+            stroke: var(--line-faint);
+            stroke-width: 1.6;
         }
 
-        /* 완벽한 반응형 (미디어 쿼리) */
-
-        /* 데스크탑에서 테블릿으로 (1024px 이하) */
-        @media (max-width: 1024px) {
-            .subtitle { font-size: 3rem; }
-            .description { font-size: 1.2rem; }
-            html[lang="ko"] .subtitle { font-size: 2.6rem; }
+        .line-orange {
+            stroke: var(--orange);
+            stroke-width: 2.45;
         }
 
-        /* 테블릿에서 모바일로 (768px 이하) */
-        @media (max-width: 768px) {
-            header { padding: 20px; gap: 16px; }
-            .brand h1 { font-size: 1.5rem; }
-            .brand img { width: 40px; height: 40px; }
-            .lang-switch { justify-content: flex-start; align-self: auto; }
-            .lang-switch button { text-align: center; }
-
-            main { padding: 20px; }
-            .subtitle { font-size: 2.4rem; letter-spacing: -1px; }
-            .description { font-size: 1.1rem; }
-            html[lang="ko"] .subtitle { font-size: 2.1rem; }
-
-            footer { padding: 20px; width: 100%; justify-content: center; }
-            .footer-copy { text-align: center; }
+        .line-green {
+            stroke: var(--green);
+            stroke-width: 2.45;
         }
 
-        /* 작은 모바일 (480px 이하) */
+        .line-blue {
+            stroke: var(--blue);
+            stroke-width: 2.45;
+        }
+
+        .node-orange {
+            stroke: var(--orange-strong);
+            stroke-width: 2.3;
+        }
+
+        .node-blue {
+            stroke: var(--blue-strong);
+            stroke-width: 2.3;
+        }
+
+        @media (max-width: 720px) {
+            .page-container {
+                padding: 28px 18px 36px;
+            }
+
+            .ambient-block.top {
+                top: 84px;
+                width: 76vw;
+                height: 160px;
+            }
+
+            .ambient-block.bottom {
+                bottom: 56px;
+                width: 44vw;
+                height: 84px;
+            }
+
+            .hero-stack {
+                gap: 22px;
+            }
+
+            .hero-title {
+                max-width: min(30rem, 96%);
+                font-size: clamp(0.98rem, 3.3vw, 1.22rem);
+            }
+
+            .hero-description {
+                max-width: min(34rem, 96%);
+                font-size: 0.98rem;
+                line-height: 1.65;
+            }
+        }
+
         @media (max-width: 480px) {
-            .subtitle { font-size: 2rem; }
-            html[lang="ko"] .subtitle { font-size: 1.8rem; }
-            .description { font-size: 1rem; }
+            .circuit-layer {
+                transform: scale(1.08);
+                transform-origin: center;
+            }
+
+            .hero-title {
+                font-size: 0.96rem;
+                line-height: 1.3;
+            }
+
+            .hero-description {
+                font-size: 0.92rem;
+            }
         }
     </style>
 </head>
 <body>
-
     <div class="page-container">
-        
-        <div class="blob-bg blob-1"></div>
-        <div class="blob-bg blob-2"></div>
+        <div class="ambient-block top"></div>
+        <div class="ambient-block bottom"></div>
 
-        <header>
-            <div class="brand">
-                <img src="./assets/logo-mark.svg" alt="PEConf Logo Mark">
-                <h1>PEConf</h1>
-            </div>
-            <div class="lang-switch" id="lang-toggle" role="group" aria-label="Language switch">
-                <button type="button" id="btn-en" aria-pressed="true">EN</button>
-                <button type="button" id="btn-ko" aria-pressed="false">KO</button>
-            </div>
-        </header>
+        <svg class="circuit-layer" viewBox="0 0 1440 1024" preserveAspectRatio="none" aria-hidden="true">
+            <path class="line-soft" d="M0 246 L78 176 H232 C257 176 277 168 294 150 L294 0" />
+            <path class="line-faint" d="M362 34 L420 -38" />
+            <path class="line-soft" d="M1096 0 L1096 48 C1096 74 1104 96 1126 118 L1182 174 C1201 193 1223 197 1247 188 L1296 170 C1313 164 1327 162 1344 162 H1440" />
+            <path class="line-soft" d="M1118 0 L1315 332 C1336 365 1360 381 1392 388 L1440 398" />
+            <path class="line-faint" d="M0 836 H256 C279 836 296 844 311 860 L445 1004 C459 1019 475 1024 497 1024" />
+            <path class="line-soft" d="M444 1024 L542 922 C556 908 572 902 592 902 H844 C864 902 879 908 894 922 L992 1024" />
+            <path class="line-soft" d="M958 1024 L1116 850 C1130 835 1148 828 1170 828 H1440" />
+            <path class="line-faint" d="M126 1024 L274 870 C288 855 306 848 328 848 H446" />
+            <path class="line-orange" d="M152 1024 L226 960 C240 946 255 940 275 940 H481" />
+            <path class="line-green" d="M481 940 H572 C588 940 602 947 613 958 L649 992" />
+            <path class="line-blue" d="M791 992 L828 958 C839 947 853 940 869 940 H1150 C1170 940 1186 946 1199 960 L1272 1024" />
+            <path class="line-blue" d="M1198 1024 L1242 976 C1257 960 1275 952 1297 952 H1440" />
+            <polygon class="node-orange" points="170,965 198,949 226,965 226,998 198,1014 170,998" />
+            <polyline class="node-orange" points="170,965 198,981 226,965" />
+            <line class="node-orange" x1="198" y1="981" x2="198" y2="1014" />
+            <polygon class="node-blue" points="1214,965 1242,949 1270,965 1270,998 1242,1014 1214,998" />
+            <polyline class="node-blue" points="1214,965 1242,981 1270,965" />
+            <line class="node-blue" x1="1242" y1="981" x2="1242" y2="1014" />
+        </svg>
 
-        <main>
-            <div class="hero-content">
-                <div class="title-group">
-                    <h2 class="subtitle" id="text-subtitle">A community for product engineers</h2>
+        <div class="hero-composition">
+            <div class="hero-stack">
+                <p class="hero-title">A community for product engineers</p>
+                <div class="hero-figure">
+                    <img src="./assets/peconf.png" alt="PEConf">
                 </div>
-                <p class="description" id="text-desc">We share what we learn while building products: how we work, what we struggle with, and how we grow.</p>
+                <p class="hero-description">We share what we learn while building products: how we work, what we struggle with, and how we grow.</p>
             </div>
-        </main>
-
-        <footer>
-            <p class="footer-copy">© 2026 PEConf. All rights reserved.</p>
-        </footer>
-
+        </div>
     </div>
-
-    <script>
-        // 번역 데이터 (의미가 자연스럽게 전달되는 의역 포함)
-        const translations = {
-            en: {
-                subtitle: "A community for<br>product engineers",
-                desc: "We share what we learn while building products: how we work, what we struggle with, and how we grow."
-            },
-            ko: {
-                subtitle: "프로덕트 엔지니어를 위한 커뮤니티",
-                desc: "프로덕트를 만들며 배운 것들을 공유합니다. 일하는 방식, 마주한 고민, 그리고 함께 성장해 나가는 이야기를 나눕니다."
-            }
-        };
-
-        // DOM 요소 캐싱
-        const html = document.documentElement;
-        const subtitleEl = document.getElementById('text-subtitle');
-        const descEl = document.getElementById('text-desc');
-        const langToggle = document.getElementById('lang-toggle');
-        const btnEn = document.getElementById('btn-en');
-        const btnKo = document.getElementById('btn-ko');
-
-        // 언어 변경 함수
-        function setLanguage(lang) {
-            html.lang = lang;
-            subtitleEl.innerHTML = translations[lang].subtitle;
-            descEl.textContent = translations[lang].desc;
-            
-            // 토글 버튼 스타일 활성화
-            if (lang === 'en') {
-                btnEn.classList.add('active');
-                btnKo.classList.remove('active');
-                btnEn.setAttribute('aria-pressed', 'true');
-                btnKo.setAttribute('aria-pressed', 'false');
-            } else {
-                btnKo.classList.add('active');
-                btnEn.classList.remove('active');
-                btnKo.setAttribute('aria-pressed', 'true');
-                btnEn.setAttribute('aria-pressed', 'false');
-            }
-        }
-
-        // 브라우저 언어 감지 및 초기 세팅
-        function initLanguage() {
-            const userLang = navigator.language || navigator.userLanguage;
-            const defaultLang = userLang.startsWith('ko') ? 'ko' : 'en';
-            setLanguage(defaultLang);
-        }
-
-        // 언어 토글 스위치 이벤트 리스너
-        langToggle.addEventListener('click', (e) => {
-            const button = e.target.closest('button');
-            if (!button) return;
-
-            const targetId = button.id;
-            if (targetId === 'btn-en') {
-                setLanguage('en');
-            } else if (targetId === 'btn-ko') {
-                setLanguage('ko');
-            }
-        });
-
-        // 초기화 실행
-        initLanguage();
-    </script>
 </body>
 </html>
